@@ -7,7 +7,7 @@
 Purpose:  This project will teach you about variadic templates and recursive templates, one of the last areas needing discussion while learning C++
 
 0) Do your best to avoid looking at previous student submissions for this project.
-    This project does not have a lot of code.  
+    This project does not have a lot of code.
     There are only 1 or 2 ways to solve it.  everyone always arrives at the same solution.
     If you look at the previous student submissions, you will be denying yourself the opportunity to figure this project out for yourself.
     If you get stuck, I would prefer if you message me for help instead of looking at the previous student submissions.
@@ -21,9 +21,28 @@ Make the following program work, which makes use of Variadic templates and Recur
 #include <string>
 #include <typeinfo>
 
+// #1
+void recursiveFunc (int i)
+{
+    std::cout << "i: " << i << std::endl;
+    
+    if (i > 0)
+    {
+        recursiveFunc (i - 1);
+    }
+    
+    std::cout << "done!" << std::endl;
+}
+
+template <typename T, typename ...Args>
+void variadicHelper()
+{
+    
+}
+
 struct Point
 {
-    Point(float _x, float _y) : x(_x), y(_y) { }
+    Point (float _x, float _y) : x(_x), y(_y) { }
     Point& multiply(float m)
     {
         x *= m;
@@ -34,9 +53,9 @@ struct Point
     {
         std::string str;
         str +="Point { x: ";
-        str += std::to_string(x);
+        str += std::to_string (x);
         str += ", y: ";
-        str += std::to_string(y);
+        str += std::to_string (y);
         str += " }";
         return str;
     }
@@ -44,13 +63,20 @@ private:
     float x{0}, y{0};
 };
 
+// #2
 template<typename Type>
 struct Wrapper
 {
-    Wrapper(Type&& t) : val(std::move(t)) 
-    { 
-        std::cout << "Wrapper(" << typeid(val).name() << ")" << std::endl; 
+    Wrapper (Type&& t) : val (std::move (t))
+    {
+        std::cout << "Wrapper(" << typeid (val).name() << ")" << std::endl;
     }
+    
+    // Not sure this is needed
+    operator Type() const { return val; }
+    operator Type&() { return val; }
+private:
+    Type val;
 };
 
 /*
@@ -58,7 +84,7 @@ struct Wrapper
 
  Commit your changes by clicking on the Source Control panel on the left, entering a message, and click [Commit and push].
  
- If you didn't already: 
+ If you didn't already:
     Make a pull request after you make your first commit
     pin the pull request link and this repl.it link to our DM thread in a single message.
 
