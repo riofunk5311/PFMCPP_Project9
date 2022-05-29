@@ -20,24 +20,23 @@ Make the following program work, which makes use of Variadic templates and Recur
 #include <iostream>
 #include <string>
 #include <typeinfo>
+#include <utility>
+#include <functional>
 
 // #1
-void recursiveFunc (int i)
+namespace Recursive
 {
-    std::cout << "i: " << i << std::endl;
-    
-    if (i > 0)
+    void recFunc (int i)
     {
-        recursiveFunc (i - 1);
+        std::cout << "i: " << i << std::endl;
+        
+        if (i > 0)
+        {
+            recFunc (i - 1);
+        }
+        
+        std::cout << "done!" << std::endl;
     }
-    
-    std::cout << "done!" << std::endl;
-}
-
-template <typename T, typename ...Args>
-void variadicHelper()
-{
-    
 }
 
 struct Point
@@ -72,12 +71,58 @@ struct Wrapper
         std::cout << "Wrapper(" << typeid (val).name() << ")" << std::endl;
     }
     
+    void print()
+    {
+        std::cout << "Wrapper::print(" << val << ")" << std::endl;
+    }
+    
+    // Not sure this is needed
+    operator Type() const { return val; }
+    operator Type&() { return val; }
+    
+private:
+    Type val;
+};
+
+// #8
+template <>
+struct Wrapper<float>
+{
+    using Type = float;
+    Wrapper (Type&& t) : val (std::move (t))
+    {
+        std::cout << "Wrapper(" << typeid (val).name() << ")" << std::endl;
+    }
+    
+    void print()
+    {
+        std::cout << "Wrapper::print(" << val << ")" << std::endl;
+    }
+    
     // Not sure this is needed
     operator Type() const { return val; }
     operator Type&() { return val; }
 private:
     Type val;
 };
+
+//void variadicHelper() {}
+
+// #3
+template <typename T, typename ... Args>
+void variadicHelper (T first, Args ... args)
+{
+    Wrapper(first).print();      // #6
+    variadicHelper (args ...);
+}
+
+// #4
+template <typename T>
+void variadicHelper (T t)
+{
+    Wrapper(t).print();
+    variadicHelper (t);
+}
 
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
@@ -95,7 +140,9 @@ private:
 
 int main()
 {
-    variadicHelper( 3, std::string("burgers"), 2.5, Point{3.f, 0.14f} );
+    variadicHelper ( 3, std::string("burgers"), 2.5, Point{3.f, 0.14f} );
+    
+    return 0;
 }
 
 
