@@ -20,23 +20,18 @@ Make the following program work, which makes use of Variadic templates and Recur
 #include <iostream>
 #include <string>
 #include <typeinfo>
-#include <utility>
-#include <functional>
 
 // #1
-namespace Recursive
+void recFunc (int i)
 {
-    void recFunc (int i)
+    std::cout << "i: " << i << std::endl;
+    
+    if (i > 0)
     {
-        std::cout << "i: " << i << std::endl;
-        
-        if (i > 0)
-        {
-            recFunc (i - 1);
-        }
-        
-        std::cout << "done!" << std::endl;
+        recFunc (i - 1);
     }
+    
+    std::cout << "done!" << std::endl;
 }
 
 struct Point
@@ -48,6 +43,7 @@ struct Point
         y *= m;
         return *this;
     }
+    
     std::string toString() const
     {
         std::string str;
@@ -63,7 +59,7 @@ private:
 };
 
 // #2
-template<typename Type>
+template <typename Type>
 struct Wrapper
 {
     Wrapper (Type&& t) : val (std::move (t))
@@ -75,11 +71,6 @@ struct Wrapper
     {
         std::cout << "Wrapper::print(" << val << ")" << std::endl;
     }
-    
-    // Not sure this is needed
-    operator Type() const { return val; }
-    operator Type&() { return val; }
-    
 private:
     Type val;
 };
@@ -98,30 +89,26 @@ struct Wrapper<float>
     {
         std::cout << "Wrapper::print(" << val << ")" << std::endl;
     }
-    
-    // Not sure this is needed
-    operator Type() const { return val; }
-    operator Type&() { return val; }
 private:
     Type val;
 };
 
-//void variadicHelper() {}
+void variadicHelper() {}
 
 // #3
 template <typename T, typename ... Args>
-void variadicHelper (T first, Args ... args)
+void variadicHelper (T&& first, Args&& ... args)
 {
-    Wrapper(first).print();      // #6
-    variadicHelper (args ...);
+    Wrapper<T> (std::forward<T>(first)).print();    // #6 and #9
+    variadicHelper (std::forward<Args> (args) ...);
 }
 
 // #4
 template <typename T>
-void variadicHelper (T t)
+void variadicHelper (T&& t)
 {
-    Wrapper(t).print();
-    variadicHelper (t);
+    Wrapper<T> (std::forward<T> (t)).print();  // #6 and #9
+    variadicHelper (std::forward<T> (t));
 }
 
 /*
@@ -140,6 +127,7 @@ void variadicHelper (T t)
 
 int main()
 {
+    variadicHelper (5);
     variadicHelper ( 3, std::string("burgers"), 2.5, Point{3.f, 0.14f} );
     
     return 0;
