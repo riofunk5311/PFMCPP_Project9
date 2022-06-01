@@ -77,25 +77,6 @@ private:
     Type val;
 };
 
-// #8
-// template <>
-// struct Wrapper<Point>
-// {
-//     using Type = Point;
-//     Wrapper (Type&& t) : val (std::move (t))
-//     {
-//         std::cout << "Wrapper(" << typeid (val).name() << ")" << std::endl;
-//     }
-    
-//     void print()
-//     {
-//         std::cout << "Wrapper::print(" << val.toString() << ")" << std::endl;
-//     }
-
-// private:
-//     Type val;
-// };
-
 // challenge 1
 template <>
 void Wrapper<Point>::print()
@@ -114,11 +95,13 @@ void variadicHelper (T&& first, Args&& ... args)
 }
 
 // #4
-template <typename T>
-void variadicHelper (T&& t)
-{
-    Wrapper<T> (std::forward<T> (t)).print();  // #6 and #9
-}
+//template <typename T>
+//void variadicHelper (T&& t)
+//{
+//    Wrapper<T> (std::forward<T> (t)).print();  // #6 and #9
+//}
+
+void variadicHelper () {}  // challenge 2
 
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
