@@ -78,23 +78,30 @@ private:
 };
 
 // #8
-template <>
-struct Wrapper<Point>
-{
-    using Type = Point;
-    Wrapper (Type&& t) : val (std::move (t))
-    {
-        std::cout << "Wrapper(" << typeid (val).name() << ")" << std::endl;
-    }
+// template <>
+// struct Wrapper<Point>
+// {
+//     using Type = Point;
+//     Wrapper (Type&& t) : val (std::move (t))
+//     {
+//         std::cout << "Wrapper(" << typeid (val).name() << ")" << std::endl;
+//     }
     
-    void print()
-    {
-        std::cout << "Wrapper::print(" << val.toString() << ")" << std::endl;
-    }
+//     void print()
+//     {
+//         std::cout << "Wrapper::print(" << val.toString() << ")" << std::endl;
+//     }
 
-private:
-    Type val;
-};
+// private:
+//     Type val;
+// };
+
+// challenge 1
+template <>
+void Wrapper<Point>::print()
+{
+    std::cout << "Wrapper::print(" << val.toString() << ")" << std::endl;
+}
 
 void variadicHelper();
 
