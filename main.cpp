@@ -1,64 +1,114 @@
 /*
- Project 9: Part 1/1
- Chapter 5 Part 7 Task
+Project 9: Part 1/1
+Chapter 5 Part 7 Task
 
- Create a branch named Part1
+Create a branch named Part1
 
 Purpose:  This project will teach you about variadic templates and recursive templates, one of the last areas needing discussion while learning C++
 
 0) Do your best to avoid looking at previous student submissions for this project.
-    This project does not have a lot of code.  
-    There are only 1 or 2 ways to solve it.  everyone always arrives at the same solution.
-    If you look at the previous student submissions, you will be denying yourself the opportunity to figure this project out for yourself.
-    If you get stuck, I would prefer if you message me for help instead of looking at the previous student submissions.
- 
+This project does not have a lot of code.
+There are only 1 or 2 ways to solve it.  everyone always arrives at the same solution.
+If you look at the previous student submissions, you will be denying yourself the opportunity to figure this project out for yourself.
+If you get stuck, I would prefer if you message me for help instead of looking at the previous student submissions.
+
 1) read Instructions.cpp
 
 Make the following program work, which makes use of Variadic templates and Recursion
- */
+*/
 
 #include <iostream>
 #include <string>
 #include <typeinfo>
 
+//#1
+void recFunc (int i)
+{
+    std::cout << "i: " << i << std::endl;
+
+    if (i > 0)
+    {
+        recFunc (i - 1);
+    }
+
+    std::cout << "done!" << std::endl;
+}
+
 struct Point
 {
-    Point(float _x, float _y) : x(_x), y(_y) { }
+    Point (float _x, float _y) : x(_x), y(_y) { }
     Point& multiply(float m)
     {
         x *= m;
         y *= m;
         return *this;
     }
+    
     std::string toString() const
     {
         std::string str;
         str +="Point { x: ";
-        str += std::to_string(x);
+        str += std::to_string (x);
         str += ", y: ";
-        str += std::to_string(y);
+        str += std::to_string (y);
         str += " }";
         return str;
     }
+
 private:
     float x{0}, y{0};
 };
 
-template<typename Type>
+// #2
+template <typename Type>
 struct Wrapper
 {
-    Wrapper(Type&& t) : val(std::move(t)) 
-    { 
-        std::cout << "Wrapper(" << typeid(val).name() << ")" << std::endl; 
+    Wrapper (Type&& t) : val (std::move (t))
+    {
+        std::cout << "Wrapper(" << typeid (val).name() << ")" << std::endl;
     }
+    
+    void print()
+    {
+        std::cout << "Wrapper::print(" << val << ")" << std::endl;
+    }
+
+private:
+    Type val;
 };
+
+// challenge 1
+template <>
+void Wrapper<Point>::print()
+{
+    std::cout << "Wrapper::print(" << val.toString() << ")" << std::endl;
+}
+
+void variadicHelper();
+
+// #3
+template <typename T, typename ... Args>
+void variadicHelper (T&& first, Args&& ... args)
+{
+    Wrapper<T> (std::forward<T> (first)).print();    // #6 and #9
+    variadicHelper (std::forward<Args> (args) ...);
+}
+
+// #4
+//template <typename T>
+//void variadicHelper (T&& t)
+//{
+//    Wrapper<T> (std::forward<T> (t)).print();  // #6 and #9
+//}
+
+void variadicHelper () {}  // challenge 2
 
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
 
  Commit your changes by clicking on the Source Control panel on the left, entering a message, and click [Commit and push].
  
- If you didn't already: 
+ If you didn't already:
     Make a pull request after you make your first commit
     pin the pull request link and this repl.it link to our DM thread in a single message.
 
@@ -69,7 +119,8 @@ struct Wrapper
 
 int main()
 {
-    variadicHelper( 3, std::string("burgers"), 2.5, Point{3.f, 0.14f} );
+    variadicHelper ( 3, std::string("burgers"), 2.5, Point{3.f, 0.14f} );
+    return 0;
 }
 
 
